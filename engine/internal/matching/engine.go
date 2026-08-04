@@ -1,6 +1,7 @@
 package matching
 
 import (
+	"log"
 	"sort"
 
 	"depthwise/engine/internal/orderbook"
@@ -23,9 +24,42 @@ func NewEngine() *Engine {
 }
 
 // Run starts the event loop, consuming from the ordered events channel and emitting trades.
+// It uses a reorder buffer to enforce strict sequence-number ordering (price-time priority)
+// even if events arrive concurrently out-of-order over the channel.
+//
+// Known limitation: Currently, there is no timeout or max-buffer-size policy. If a sequence 
+// number is genuinely lost, the engine will stall indefinitely waiting for it. This gap/timeout 
+// handling is out of scope for this task and must be addressed for production.
 func (e *Engine) Run(events <-chan orderbook.OrderEvent, trades chan<- orderbook.Trade) {
+	nextExpectedSeq := 1
+	pending := make(map[int]orderbook.OrderEvent)
+
 	for ev := range events {
-		e.processEvent(ev, trades)
+		if ev.Seq < nextExpectedSeq {
+			// Duplicate or stale event that we already processed/passed
+			log.Printf("Warning: dropped duplicate or stale event seq=%d\n", ev.Seq)
+			continue
+		} 
+        
+        if ev.Seq > nextExpectedSeq {
+			// Out of order event, buffer it
+			pending[ev.Seq] = ev
+		} else {
+			// ev.Seq == nextExpectedSeq
+			e.processEvent(ev, trades)
+			nextExpectedSeq++
+
+			// Drain the buffer of any subsequent sequential events
+			for {
+				if pendingEv, ok := pending[nextExpectedSeq]; ok {
+					delete(pending, nextExpectedSeq)
+					e.processEvent(pendingEv, trades)
+					nextExpectedSeq++
+				} else {
+					break
+				}
+			}
+		}
 	}
 }
 
