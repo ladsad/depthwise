@@ -53,12 +53,12 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
       {/* Structural Header */}
       <div className="px-4 py-2.5 border-b border-border bg-canvas-subtle flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Layers className="w-3.5 h-3.5 text-mustard" />
+          <Layers className="w-3.5 h-3.5 text-terracotta" />
           <h2 className="text-xs font-bold text-content uppercase tracking-wider font-mono">
             01 / LEVEL-2 ORDER BOOK
           </h2>
         </div>
-        <span className="text-[10px] text-mustard-dark font-mono bg-mustard-subtle px-2 py-0.5 border border-mustard-border font-bold">
+        <span className="text-[10px] text-terracotta-dark font-mono bg-terracotta-subtle px-2 py-0.5 border border-terracotta-border font-bold">
           FIFO PRIORITY
         </span>
       </div>
@@ -87,17 +87,17 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
                 <div
                   key={`ask-${price}`}
                   className={`relative grid grid-cols-12 px-2 py-1 text-xs font-mono items-center transition-colors ${
-                    hasActiveOrder ? 'bg-red-50 border-l-2 border-brightred' : 'hover:bg-canvas-subtle'
+                    hasActiveOrder ? 'bg-burgundy-subtle border-l-2 border-burgundy' : 'hover:bg-canvas-subtle'
                   }`}
                 >
                   {/* Depth Bar Background */}
                   <div
-                    className="absolute right-0 top-0 bottom-0 bg-red-100/80 pointer-events-none"
+                    className="absolute right-0 top-0 bottom-0 bg-[#6B0C08]/10 pointer-events-none"
                     style={{ width: `${depthPct}%` }}
                   />
 
                   {/* Price */}
-                  <div className="col-span-3 font-bold text-brightred z-10">
+                  <div className="col-span-3 font-bold text-burgundy z-10">
                     ${price.toFixed(2)}
                   </div>
 
@@ -113,12 +113,12 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
                         key={o.id}
                         className={`text-[10px] px-1.5 py-0.2 border transition-colors ${
                           o.id === latestEventID
-                            ? 'bg-red-100 text-red-900 border-brightred font-bold ring-1 ring-red-300'
+                            ? 'bg-burgundy-light text-burgundy-dark border-burgundy font-bold ring-1 ring-burgundy-border'
                             : 'bg-canvas-surface text-content-secondary border-border'
                         }`}
                         title={`Queue position #${idx + 1} at price $${price} (Remaining: ${o.qty})`}
                       >
-                        <span className="text-brightred font-bold">{o.id}</span>
+                        <span className="text-burgundy font-bold">{o.id}</span>
                         <span className="text-content-muted ml-1">({o.qty})</span>
                       </span>
                     ))}
@@ -134,10 +134,10 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
           <div className="flex items-center space-x-2">
             <span className="text-content-secondary uppercase text-[10px] tracking-wider font-bold">SPREAD:</span>
             {spread !== null ? (
-              <span className="font-bold text-mustard-dark bg-mustard-subtle px-1.5 py-0.2 border border-mustard-border">
+              <span className="font-bold text-navy-dark bg-navy-light px-1.5 py-0.2 border border-navy-border">
                 ${spread.toFixed(2)}{' '}
                 {bestBid && (
-                  <span className="text-mustard-dark font-normal">
+                  <span className="text-navy font-normal">
                     ({((spread / bestBid) * 10000).toFixed(0)} bps)
                   </span>
                 )}
@@ -147,11 +147,11 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
             )}
           </div>
           <div className="flex items-center space-x-3 text-[11px]">
-            <span className="text-mustard font-bold">
+            <span className="text-terracotta-dark font-bold">
               BID: {bestBid !== null ? `$${bestBid.toFixed(2)}` : '—'}
             </span>
             <span className="text-border-strong">|</span>
-            <span className="text-brightred font-bold">
+            <span className="text-burgundy font-bold">
               ASK: {bestAsk !== null ? `$${bestAsk.toFixed(2)}` : '—'}
             </span>
           </div>
@@ -172,17 +172,17 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
                 <div
                   key={`bid-${price}`}
                   className={`relative grid grid-cols-12 px-2 py-1 text-xs font-mono items-center transition-colors ${
-                    hasActiveOrder ? 'bg-amber-50 border-l-2 border-mustard' : 'hover:bg-canvas-subtle'
+                    hasActiveOrder ? 'bg-terracotta-subtle border-l-2 border-terracotta' : 'hover:bg-canvas-subtle'
                   }`}
                 >
                   {/* Depth Bar Background */}
                   <div
-                    className="absolute right-0 top-0 bottom-0 bg-amber-100/80 pointer-events-none"
+                    className="absolute right-0 top-0 bottom-0 bg-[#AA784F]/15 pointer-events-none"
                     style={{ width: `${depthPct}%` }}
                   />
 
                   {/* Price */}
-                  <div className="col-span-3 font-bold text-mustard z-10">
+                  <div className="col-span-3 font-bold text-terracotta-dark z-10">
                     ${price.toFixed(2)}
                   </div>
 
@@ -198,12 +198,12 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
                         key={o.id}
                         className={`text-[10px] px-1.5 py-0.2 border transition-colors ${
                           o.id === latestEventID
-                            ? 'bg-amber-100 text-amber-900 border-mustard font-bold ring-1 ring-amber-300'
+                            ? 'bg-terracotta-light text-terracotta-dark border-terracotta font-bold ring-1 ring-terracotta-border'
                             : 'bg-canvas-surface text-content-secondary border-border'
                         }`}
                         title={`Queue position #${idx + 1} at price $${price} (Remaining: ${o.qty})`}
                       >
-                        <span className="text-mustard font-bold">{o.id}</span>
+                        <span className="text-terracotta-dark font-bold">{o.id}</span>
                         <span className="text-content-muted ml-1">({o.qty})</span>
                       </span>
                     ))}

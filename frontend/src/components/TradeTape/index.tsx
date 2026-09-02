@@ -12,12 +12,12 @@ export const TradeTape: React.FC<TradeTapeProps> = ({ trades }) => {
       {/* Structural Header */}
       <div className="px-4 py-2.5 border-b border-border bg-canvas-subtle flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <TrendingUp className="w-3.5 h-3.5 text-mustard" />
+          <TrendingUp className="w-3.5 h-3.5 text-terracotta" />
           <h2 className="text-xs font-bold text-content uppercase tracking-wider font-mono">
             02 / TRADE EXECUTION TAPE
           </h2>
         </div>
-        <span className="text-[10px] text-mustard-dark font-mono bg-mustard-subtle px-2 py-0.5 border border-mustard-border font-bold">
+        <span className="text-[10px] text-terracotta-dark font-mono bg-terracotta-subtle px-2 py-0.5 border border-terracotta-border font-bold">
           {trades.length} EXECUTED
         </span>
       </div>
@@ -46,18 +46,18 @@ export const TradeTape: React.FC<TradeTapeProps> = ({ trades }) => {
               <div className="col-span-2 text-content-secondary font-semibold">
                 #{String(trades.length - idx).padStart(2, '0')}
               </div>
-              <div className="col-span-3 font-bold text-mustard">
+              <div className="col-span-3 font-bold text-terracotta-dark">
                 ${trade.price.toFixed(2)}
               </div>
               <div className="col-span-3 text-right font-bold text-content">
                 {trade.qty}
               </div>
               <div className="col-span-4 text-right text-[11px] flex items-center justify-end space-x-1">
-                <span className="bg-amber-100 text-amber-900 border border-amber-300 font-bold px-1 py-0.2">
+                <span className="bg-terracotta-subtle text-terracotta-dark border border-terracotta-border font-bold px-1.5 py-0.2">
                   {trade.buyer_id}
                 </span>
                 <span className="text-content-muted font-bold">➔</span>
-                <span className="bg-red-100 text-red-900 border border-red-300 font-bold px-1 py-0.2">
+                <span className="bg-burgundy-subtle text-burgundy border border-burgundy-border font-bold px-1.5 py-0.2">
                   {trade.seller_id}
                 </span>
               </div>

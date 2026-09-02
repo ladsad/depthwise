@@ -41,7 +41,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* Scenario Metadata */}
         <div className="flex items-center space-x-3">
-          <div className="px-2.5 py-1 bg-mustard-subtle border border-mustard-border text-mustard-dark font-mono text-xs font-bold uppercase tracking-wider">
+          <div className="px-2.5 py-1 bg-terracotta-subtle border border-terracotta-border text-terracotta-dark font-mono text-xs font-bold uppercase tracking-wider">
             {scenario?.title ? `SCENARIO / ${scenario.title}` : 'SCENARIO / 01'}
           </div>
           <div className="text-xs text-content-secondary font-mono">
@@ -66,10 +66,10 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
             disabled={isAtEnd && !isPlaying}
             className={`px-3 py-1.5 flex items-center space-x-1.5 text-xs font-mono font-bold transition-colors border ${
               isPlaying
-                ? 'bg-amber-100 text-amber-900 border-amber-400 hover:bg-amber-200'
+                ? 'bg-navy-light text-navy-dark border-navy-border hover:bg-navy-subtle'
                 : isAtEnd
                 ? 'bg-canvas-subtle text-content-disabled border-border cursor-not-allowed'
-                : 'bg-mustard text-content border-mustard-dark hover:bg-[#CA8A04]'
+                : 'bg-terracotta text-white border-terracotta-dark hover:bg-terracotta-dark'
             }`}
           >
             {isPlaying ? (
@@ -92,7 +92,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
             className={`px-3.5 py-1.5 flex items-center space-x-1 text-xs font-mono font-bold transition-colors border ${
               isAtEnd || isPlaying
                 ? 'bg-canvas-subtle text-content-disabled border-border cursor-not-allowed'
-                : 'bg-brightred text-white border-brightred hover:bg-brightred-dark'
+                : 'bg-burgundy text-white border-burgundy hover:bg-burgundy-dark'
             }`}
           >
             <span>STEP TICK</span>
@@ -103,7 +103,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
         {/* Speed Controls */}
         <div className="flex items-center space-x-1 bg-canvas-subtle p-0.5 border border-border text-[11px] font-mono">
           <div className="flex items-center text-content-secondary px-1.5">
-            <Gauge className="w-3.5 h-3.5 mr-1 text-mustard" />
+            <Gauge className="w-3.5 h-3.5 mr-1 text-terracotta" />
             <span className="text-[10px] uppercase font-bold">SPEED</span>
           </div>
           {[

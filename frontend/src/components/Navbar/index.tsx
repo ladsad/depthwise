@@ -14,14 +14,14 @@ export const Navbar: React.FC<NavbarProps> = ({ connected, activeMode, onSelectM
         {/* Left: Brand & Navigation */}
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-2.5">
-            <div className="h-7 w-7 bg-mustard text-content flex items-center justify-center font-mono font-bold text-xs">
+            <div className="h-7 w-7 bg-burgundy text-white flex items-center justify-center font-mono font-bold text-xs">
               DW
             </div>
             <div className="flex items-center space-x-2">
               <span className="font-mono font-bold text-sm tracking-wider text-content">
                 DEPTHWISE
               </span>
-              <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 bg-mustard-subtle text-mustard-dark border border-mustard-border font-bold">
+              <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 bg-terracotta-subtle text-terracotta-dark border border-terracotta-border font-bold">
                 v0.1
               </span>
             </div>
@@ -35,23 +35,23 @@ export const Navbar: React.FC<NavbarProps> = ({ connected, activeMode, onSelectM
               onClick={() => onSelectMode('lab')}
               className={`px-3 py-1 text-xs font-mono transition-colors flex items-center space-x-1.5 ${
                 activeMode === 'lab'
-                  ? 'bg-canvas-surface text-content font-bold border border-border-strong border-l-2 border-l-mustard'
+                  ? 'bg-canvas-surface text-content font-bold border border-border-strong border-l-2 border-l-burgundy'
                   : 'text-content-secondary hover:text-content border border-transparent'
               }`}
             >
-              <Terminal className="w-3.5 h-3.5 text-mustard" />
+              <Terminal className="w-3.5 h-3.5 text-burgundy" />
               <span>01 / LEARNING LAB</span>
             </button>
             <button
               onClick={() => onSelectMode('live')}
               className={`px-3 py-1 text-xs font-mono transition-colors flex items-center space-x-1.5 ${
                 activeMode === 'live'
-                  ? 'bg-canvas-surface text-content font-bold border border-border-strong border-l-2 border-l-mustard'
+                  ? 'bg-canvas-surface text-content font-bold border border-border-strong border-l-2 border-l-burgundy'
                   : 'text-content-disabled border border-transparent cursor-not-allowed opacity-60'
               }`}
               title="Live Pulse mode coming in next milestone"
             >
-              <Activity className="w-3.5 h-3.5" />
+              <Activity className="w-3.5 h-3.5 text-navy" />
               <span>02 / LIVE PULSE</span>
               <span className="text-[9px] bg-canvas-dark text-content-muted px-1 py-0.2 border border-border">SOON</span>
             </button>
@@ -61,19 +61,19 @@ export const Navbar: React.FC<NavbarProps> = ({ connected, activeMode, onSelectM
         {/* Right: Telemetry & State */}
         <div className="flex items-center space-x-3 text-xs font-mono">
           <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 bg-canvas-subtle border border-border text-content-secondary">
-            <Cpu className="w-3.5 h-3.5 text-mustard" />
+            <Cpu className="w-3.5 h-3.5 text-navy" />
             <span>ENGINE:</span>
             <span className="text-content font-semibold">~330k ops/sec</span>
           </div>
 
           <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 bg-canvas-subtle border border-border text-content-secondary">
-            <ShieldCheck className="w-3.5 h-3.5 text-mustard" />
+            <ShieldCheck className="w-3.5 h-3.5 text-terracotta" />
             <span>FIFO CORE</span>
           </div>
 
           <div className="flex items-center space-x-2 px-2.5 py-1 bg-canvas-surface border border-border">
-            <span className={`h-2 w-2 ${connected ? 'bg-mustard animate-pulse' : 'bg-brightred'}`} />
-            <span className={connected ? 'text-mustard font-bold' : 'text-brightred font-bold'}>
+            <span className={`h-2 w-2 ${connected ? 'bg-terracotta animate-pulse' : 'bg-burgundy'}`} />
+            <span className={connected ? 'text-terracotta-dark font-bold' : 'text-burgundy font-bold'}>
               {connected ? 'CORE CONNECTED' : 'DISCONNECTED'}
             </span>
           </div>

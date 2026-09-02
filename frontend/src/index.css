@@ -5,24 +5,24 @@
 @layer base {
   body {
     @apply bg-canvas text-content font-sans antialiased;
-    background-color: #F7F8FA;
-    color: #171A1F;
+    background-color: #E7E6E3;
+    color: #33312E;
   }
 }
 
 /* Subtle Technical Blueprint Grid (32px x 32px) */
 .bg-tech-grid {
   background-image:
-    linear-gradient(#E7E9ED 1px, transparent 1px),
-    linear-gradient(90deg, #E7E9ED 1px, transparent 1px);
+    linear-gradient(#DDD8CE 1px, transparent 1px),
+    linear-gradient(90deg, #DDD8CE 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
 /* Technical Blueprint Grid (Large 40px x 40px) */
 .bg-tech-grid-lg {
   background-image:
-    linear-gradient(#E7E9ED 1px, transparent 1px),
-    linear-gradient(90deg, #E7E9ED 1px, transparent 1px);
+    linear-gradient(#DDD8CE 1px, transparent 1px),
+    linear-gradient(90deg, #DDD8CE 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -33,16 +33,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #F1F3F5;
+  background: #E7E6E3;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D9DDE3;
+  background: #CABFAC;
   border-radius: 0px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #AEB5BF;
+  background: #A89C87;
 }
 
 /* Custom Flat Range Input */
@@ -60,7 +60,7 @@ input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
   height: 4px;
   cursor: pointer;
-  background: #D9DDE3;
+  background: #CABFAC;
   border-radius: 0px;
 }
 
@@ -68,15 +68,15 @@ input[type=range]::-webkit-slider-thumb {
   height: 14px;
   width: 14px;
   border-radius: 2px;
-  background: #171A1F;
+  background: #33312E;
   cursor: pointer;
   -webkit-appearance: none;
   margin-top: -5px;
-  border: 1px solid #171A1F;
+  border: 1px solid #33312E;
   transition: background 0.15s ease;
 }
 
 input[type=range]::-webkit-slider-thumb:hover {
-  background: #D49200;
-  border-color: #D49200;
+  background: #AA784F;
+  border-color: #AA784F;
 }
