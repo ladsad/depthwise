@@ -16,9 +16,32 @@ Depthwise never claims a price move "is real" or "is fake" in Live Pulse. It sur
 | Layer | Choice |
 |---|---|
 | Matching engine | Go |
-| Frontend | React + TypeScript |
+| Frontend | React + TypeScript (TailwindCSS, Vite) |
 | Real-time transport | WebSockets (shared by both modes) |
 | Real data provider | Alpaca (free real-time IEX trade/quote data), Finnhub as backup |
 | Agent / LLM | Cloudflare Workers AI (open model), Claude Haiku as a paid fallback only if needed |
 | Backend hosting | Cloudflare Workers + Durable Objects |
 | Frontend hosting | Vercel or Cloudflare Pages |
+
+## Quickstart
+
+### 1. Start the Matching Engine Server
+```powershell
+cd engine
+go run ./cmd/server
+```
+*Server runs on `http://localhost:8080` with WebSocket endpoint at `ws://localhost:8080/ws/lab`.*
+
+### 2. Start the Frontend
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+*Frontend runs on `http://localhost:5173`.*
+
+### 3. Run Tests
+```powershell
+cd engine
+go test -v ./...
+```
