@@ -77,6 +77,6 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 input[type=range]::-webkit-slider-thumb:hover {
-  background: #6D28D9;
-  border-color: #6D28D9;
+  background: #D49200;
+  border-color: #D49200;
 }

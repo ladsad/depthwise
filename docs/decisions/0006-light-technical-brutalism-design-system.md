@@ -13,12 +13,12 @@ Key tenets:
 2. **Zero Artificial Depth**: Prohibit drop shadows, floating cards, heavy gradients, elevation levels, and glassmorphism. Visual hierarchy is established via spacing, 1px solid borders (#D9DDE3), background contrast, and typography.
 3. **Restrained Engineered Geometry**: Enforce crisp 0–4px border radii (no pill-shaped containers or bubbly buttons).
 4. **Information Architecture**: Utilize monospace typography (`JetBrains Mono`) for technical metrics, sequence numbers, identifiers, and section dividers (`01 / LEVEL-2 ORDER BOOK`, `02 / TRADE EXECUTION TAPE`, `03 / EVENT INSPECTOR`).
-5. **Intentional Semantic Accents**: Use high-contrast, purposeful color coding to accelerate data comprehension without adding visual clutter:
-   - **Bids & Executions**: Success green (`#16A34A`) for bid prices, positive fills, and depth fills (`bg-emerald-100`).
-   - **Asks & Cancellations**: Danger red (`#DC2626`) for ask prices, sell orders, and depth fills (`bg-rose-100`).
-   - **Active Touched Queue States**: Highlighted with high-contrast ringed badges (`bg-emerald-100`/`bg-rose-100` with solid borders).
-   - **Event Explanations & Takeaways**: Accent indicator bars (`border-l-4 border-l-accent-primary`) and semantic action tags (`[ FULL MATCH ]`, `[ PARTIAL MATCH ]`, `[ CANCELLED ]`).
-   - **Primary Controls & Brand**: Primary purple (`#6D28D9`) and secondary cyan (`#06B6D4`) for active tabs, scenario metadata, and spread metrics.
+5. **Intentional Semantic Accents (Mustard Yellow & Bright Red)**: Use high-contrast, purposeful color coding to accelerate data comprehension without adding visual clutter:
+   - **Bids, Purchases & Primary Focus**: Mustard Yellow (`#D49200` / `#CA8A04` / `#FEF9C3`) for bid prices, buy-side depth fills, brand identity, active tabs, and positive match analysis.
+   - **Asks, Sales & Cancellations**: Bright Vivid Red (`#FF2E2E` / `#FEE2E2` / `#991B1B`) for ask prices, sell orders, sell-side depth fills, cancellations, and step execution controls.
+   - **Active Touched Queue States**: Highlighted with high-contrast ringed badges (`bg-amber-100`/`bg-red-100` with solid borders).
+   - **Event Explanations & Takeaways**: Mustard accent indicator bars (`border-l-4 border-l-mustard`) and high-contrast semantic action tags (`[ FULL MATCH ]`, `[ PARTIAL MATCH ]`, `[ CANCELLED ]`).
+   - **Spread Collision Metrics**: Highlighted with mustard badge strip for instant inside spread recognition.
 
 ## Consequences
 

@@ -101,41 +101,41 @@ export const DepthChart: React.FC<DepthChartProps> = ({ book }) => {
   }, [askSteps, minPrice, maxPrice, maxCumulative]);
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden flex flex-col shadow-lg">
-      <div className="px-4 py-3 border-b border-slate-800/80 bg-slate-950/40 flex items-center justify-between">
+    <div className="bg-canvas-surface border border-border flex flex-col">
+      <div className="px-4 py-2.5 border-b border-border bg-canvas-subtle flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <BarChart2 className="w-4 h-4 text-cyan-400" />
-          <h3 className="text-xs font-semibold text-slate-200 uppercase tracking-wider font-mono">
-            Cumulative Depth Surface (Supply & Demand)
+          <BarChart2 className="w-3.5 h-3.5 text-mustard" />
+          <h3 className="text-xs font-bold text-content uppercase tracking-wider font-mono">
+            03 / CUMULATIVE DEPTH SURFACE
           </h3>
         </div>
         <div className="flex items-center space-x-3 text-[10px] font-mono">
-          <span className="flex items-center space-x-1 text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
-            <span>Cumulative Bids</span>
+          <span className="flex items-center space-x-1 text-mustard-dark">
+            <span className="w-2 h-2 bg-mustard inline-block" />
+            <span className="font-bold">Bids</span>
           </span>
-          <span className="flex items-center space-x-1 text-rose-400">
-            <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" />
-            <span>Cumulative Asks</span>
+          <span className="flex items-center space-x-1 text-brightred">
+            <span className="w-2 h-2 bg-brightred inline-block" />
+            <span className="font-bold">Asks</span>
           </span>
         </div>
       </div>
 
       <div className="p-3 flex justify-center items-center">
         {bidSteps.length === 0 && askSteps.length === 0 ? (
-          <div className="h-44 flex items-center justify-center text-xs font-mono text-slate-600">
+          <div className="h-44 flex items-center justify-center text-xs font-mono text-content-muted">
             No resting depth data
           </div>
         ) : (
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-44 select-none">
             <defs>
               <linearGradient id="bidGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.45" />
-                <stop offset="100%" stopColor="#10b981" stopOpacity="0.05" />
+                <stop offset="0%" stopColor="#D49200" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#D49200" stopOpacity="0.05" />
               </linearGradient>
               <linearGradient id="askGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#ef4444" stopOpacity="0.45" />
-                <stop offset="100%" stopColor="#ef4444" stopOpacity="0.05" />
+                <stop offset="0%" stopColor="#FF2E2E" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#FF2E2E" stopOpacity="0.05" />
               </linearGradient>
             </defs>
 
@@ -147,19 +147,19 @@ export const DepthChart: React.FC<DepthChartProps> = ({ book }) => {
                 y1={padding.top + chartHeight * (1 - pct)}
                 x2={padding.left + chartWidth}
                 y2={padding.top + chartHeight * (1 - pct)}
-                stroke="#1e293b"
-                strokeDasharray="3 3"
+                stroke="#E7E9ED"
+                strokeDasharray="2 2"
               />
             ))}
 
             {/* Bid Polygon */}
             {bidPath && (
-              <path d={bidPath} fill="url(#bidGrad)" stroke="#10b981" strokeWidth="2" />
+              <path d={bidPath} fill="url(#bidGrad)" stroke="#D49200" strokeWidth="1.5" />
             )}
 
             {/* Ask Polygon */}
             {askPath && (
-              <path d={askPath} fill="url(#askGrad)" stroke="#ef4444" strokeWidth="2" />
+              <path d={askPath} fill="url(#askGrad)" stroke="#FF2E2E" strokeWidth="1.5" />
             )}
 
             {/* Spread Divider Marker */}
@@ -170,7 +170,7 @@ export const DepthChart: React.FC<DepthChartProps> = ({ book }) => {
                   y1={padding.top}
                   x2={getX((bestBid + bestAsk) / 2)}
                   y2={padding.top + chartHeight}
-                  stroke="#38bdf8"
+                  stroke="#D49200"
                   strokeWidth="1.5"
                   strokeDasharray="2 2"
                 />
@@ -178,9 +178,10 @@ export const DepthChart: React.FC<DepthChartProps> = ({ book }) => {
                   x={getX((bestBid + bestAsk) / 2)}
                   y={padding.top - 5}
                   textAnchor="middle"
-                  fill="#38bdf8"
+                  fill="#713F12"
                   fontSize="9"
                   fontFamily="monospace"
+                  fontWeight="bold"
                 >
                   Spread: ${(bestAsk - bestBid).toFixed(2)}
                 </text>
@@ -197,7 +198,7 @@ export const DepthChart: React.FC<DepthChartProps> = ({ book }) => {
                   x={x}
                   y={svgHeight - 10}
                   textAnchor="middle"
-                  fill="#64748b"
+                  fill="#5F6670"
                   fontSize="10"
                   fontFamily="monospace"
                 >
@@ -211,7 +212,7 @@ export const DepthChart: React.FC<DepthChartProps> = ({ book }) => {
               x={padding.left - 6}
               y={padding.top + 10}
               textAnchor="end"
-              fill="#64748b"
+              fill="#5F6670"
               fontSize="9"
               fontFamily="monospace"
             >
@@ -221,7 +222,7 @@ export const DepthChart: React.FC<DepthChartProps> = ({ book }) => {
               x={padding.left - 6}
               y={padding.top + chartHeight}
               textAnchor="end"
-              fill="#64748b"
+              fill="#5F6670"
               fontSize="9"
               fontFamily="monospace"
             >
@@ -233,4 +234,6 @@ export const DepthChart: React.FC<DepthChartProps> = ({ book }) => {
     </div>
   );
 };
+
 export default DepthChart;
+

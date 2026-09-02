@@ -18,7 +18,7 @@ export default function Lab() {
     : undefined;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-canvas text-content flex flex-col font-sans bg-tech-grid">
       {/* Top Navbar */}
       <Navbar
         connected={engine.connected}
