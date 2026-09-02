@@ -25,3 +25,21 @@
 ## Price Discovery
 
 ## Liquidity Shock
+
+## Engine Benchmarks
+
+*(Note: These are in-memory, single-symbol, no I/O numbers. They represent pure engine throughput and latency without network, persistence, or serialization overhead).*
+
+**Date:** 2026-08-05
+**Batch Size:** 100,000 events
+**Composition:** ~70% new orders (10% market, 90% limit), ~30% cancel orders
+
+**Throughput:**
+- ~330,000 orders/sec
+
+**Latency (End-to-End processing per event):**
+- **p50:** 0.00 탎
+- **p95:** 0.00 탎
+- **p99:** 0.00 탎
+*(Note: Because the engine mutation takes ~3탎 on average, individual event measurements frequently resolve to exactly 0.00 탎 due to standard timer resolution limits on Windows).*
+

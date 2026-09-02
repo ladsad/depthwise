@@ -19,7 +19,7 @@ func TestScenario1_BasicMatching(t *testing.T) {
 
 	// Run engine in a goroutine
 	go func() {
-		engine.Run(eventsCh, tradesCh)
+		engine.Run(eventsCh, tradesCh, nil)
 		close(tradesCh)
 	}()
 
@@ -64,7 +64,7 @@ func TestScenario1_ConcurrentCancelRace(t *testing.T) {
 
 	// Run engine in a goroutine
 	go func() {
-		engine.Run(eventsCh, tradesCh)
+		engine.Run(eventsCh, tradesCh, nil)
 		close(tradesCh)
 	}()
 

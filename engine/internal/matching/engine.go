@@ -30,7 +30,7 @@ func NewEngine() *Engine {
 // Known limitation: Currently, there is no timeout or max-buffer-size policy. If a sequence 
 // number is genuinely lost, the engine will stall indefinitely waiting for it. This gap/timeout 
 // handling is out of scope for this task and must be addressed for production.
-func (e *Engine) Run(events <-chan orderbook.OrderEvent, trades chan<- orderbook.Trade) {
+func (e *Engine) Run(events <-chan orderbook.OrderEvent, trades chan<- orderbook.Trade, results chan<- int) {
 	nextExpectedSeq := 1
 	pending := make(map[int]orderbook.OrderEvent)
 
@@ -47,6 +47,9 @@ func (e *Engine) Run(events <-chan orderbook.OrderEvent, trades chan<- orderbook
 		} else {
 			// ev.Seq == nextExpectedSeq
 			e.processEvent(ev, trades)
+			if results != nil {
+				results <- ev.Seq
+			}
 			nextExpectedSeq++
 
 			// Drain the buffer of any subsequent sequential events
@@ -54,6 +57,9 @@ func (e *Engine) Run(events <-chan orderbook.OrderEvent, trades chan<- orderbook
 				if pendingEv, ok := pending[nextExpectedSeq]; ok {
 					delete(pending, nextExpectedSeq)
 					e.processEvent(pendingEv, trades)
+					if results != nil {
+						results <- pendingEv.Seq
+					}
 					nextExpectedSeq++
 				} else {
 					break
