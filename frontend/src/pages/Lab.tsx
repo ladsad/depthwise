@@ -3,6 +3,8 @@ import { useLabEngine } from '../lib/ws-client';
 import { Navbar } from '../components/Navbar';
 import { OrderBook } from '../components/OrderBook';
 import { PlaybackControls } from '../components/PlaybackControls';
+import { Timeline } from '../components/Timeline';
+import { DepthChart } from '../components/DepthChart';
 import { EventInspector } from '../components/EventInspector';
 import { TradeTape } from '../components/TradeTape';
 import { ScenarioOverview } from '../components/ScenarioOverview';
@@ -39,11 +41,19 @@ export default function Lab() {
           onJumpTo={engine.jumpTo}
         />
 
+        {/* Interactive Sequence Timeline */}
+        <Timeline
+          scenario={engine.scenario}
+          currentSeq={engine.currentSeq}
+          onJumpTo={engine.jumpTo}
+        />
+
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Left Column: Order Book & Execution Tape */}
           <div className="lg:col-span-7 space-y-4 flex flex-col">
             <OrderBook book={engine.book} latestEventID={currentEventID} />
+            <DepthChart book={engine.book} />
             <TradeTape trades={engine.allTrades} />
           </div>
 

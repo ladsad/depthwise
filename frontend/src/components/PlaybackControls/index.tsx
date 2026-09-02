@@ -37,15 +37,15 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   const isAtEnd = totalEvents > 0 && currentSeq >= totalEvents;
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg flex flex-col space-y-3">
+    <div className="bg-canvas-surface border border-border p-4 flex flex-col space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Scenario Info */}
+        {/* Scenario Metadata */}
         <div className="flex items-center space-x-3">
-          <div className="px-2.5 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-xs font-semibold">
-            {scenario?.title || 'Scenario 1'}
+          <div className="px-2.5 py-1 bg-purple-50 border border-purple-200 text-accent-primary font-mono text-xs font-bold uppercase tracking-wider">
+            {scenario?.title ? `SCENARIO / ${scenario.title}` : 'SCENARIO / 01'}
           </div>
-          <div className="text-xs text-slate-400 font-mono">
-            Sequence: <span className="text-slate-100 font-bold">{currentSeq}</span> / {totalEvents}
+          <div className="text-xs text-content-secondary font-mono">
+            SEQUENCE: <span className="text-content font-bold">{String(currentSeq).padStart(2, '0')}</span> / {String(totalEvents).padStart(2, '0')}
           </div>
         </div>
 
@@ -54,7 +54,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
           {/* Reset Button */}
           <button
             onClick={onReset}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700/60 shadow-sm"
+            className="p-1.5 bg-canvas-surface hover:bg-canvas-subtle text-content border border-border hover:border-content transition-colors"
             title="Reset to Sequence 0"
           >
             <RotateCcw className="w-4 h-4" />
@@ -64,58 +64,61 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
           <button
             onClick={() => (isPlaying ? onPause() : onPlay(speedMs))}
             disabled={isAtEnd && !isPlaying}
-            className={`px-3.5 py-2 rounded-lg flex items-center space-x-1.5 text-xs font-mono font-semibold transition-all shadow-md ${
+            className={`px-3 py-1.5 flex items-center space-x-1.5 text-xs font-mono font-bold transition-colors border ${
               isPlaying
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
+                ? 'bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200'
                 : isAtEnd
-                ? 'bg-slate-800 text-slate-500 border border-slate-700/50 cursor-not-allowed'
-                : 'bg-cyan-500 text-slate-950 hover:bg-cyan-400 font-bold shadow-cyan-500/20'
+                ? 'bg-canvas-subtle text-content-disabled border-border cursor-not-allowed'
+                : 'bg-accent-primary text-white border-accent-primary hover:bg-purple-800'
             }`}
           >
             {isPlaying ? (
               <>
                 <Pause className="w-3.5 h-3.5 fill-current" />
-                <span>Pause</span>
+                <span>PAUSE</span>
               </>
             ) : (
               <>
                 <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Play Auto</span>
+                <span>PLAY AUTO</span>
               </>
             )}
           </button>
 
-          {/* Step Button */}
+          {/* Step Tick Button */}
           <button
             onClick={onStep}
             disabled={isAtEnd || isPlaying}
-            className={`px-4 py-2 rounded-lg flex items-center space-x-1 text-xs font-mono font-bold transition-all ${
+            className={`px-3.5 py-1.5 flex items-center space-x-1 text-xs font-mono font-bold transition-colors border ${
               isAtEnd || isPlaying
-                ? 'bg-slate-800 text-slate-500 border border-slate-700/50 cursor-not-allowed'
-                : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-900/30 border border-emerald-500/50'
+                ? 'bg-canvas-subtle text-content-disabled border-border cursor-not-allowed'
+                : 'bg-bid text-white border-bid hover:bg-[#15803D]'
             }`}
           >
-            <span>Step Tick</span>
-            <ChevronRight className="w-4 h-4" />
+            <span>STEP TICK</span>
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Speed Controls */}
-        <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[11px] font-mono">
-          <Gauge className="w-3.5 h-3.5 text-slate-400 ml-1.5 mr-0.5" />
+        <div className="flex items-center space-x-1 bg-canvas-subtle p-0.5 border border-border text-[11px] font-mono">
+          <div className="flex items-center text-content-secondary px-1.5">
+            <Gauge className="w-3.5 h-3.5 mr-1 text-accent-secondary" />
+            <span className="text-[10px] uppercase font-semibold">SPEED</span>
+          </div>
           {[
             { label: '0.5x', ms: 1200 },
             { label: '1x', ms: 700 },
             { label: '2x', ms: 350 },
-            { label: 'Fast', ms: 120 },
+            { label: 'FAST', ms: 120 },
           ].map((sp) => (
             <button
               key={sp.label}
               onClick={() => handleSpeedChange(sp.ms)}
-              className={`px-2 py-0.5 rounded transition-all ${
+              className={`px-2 py-0.5 transition-colors ${
                 speedMs === sp.ms
-                  ? 'bg-cyan-500/20 text-cyan-300 font-semibold border border-cyan-500/30'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-content text-canvas-surface font-bold border border-content'
+                  : 'text-content-secondary hover:text-content border border-transparent'
               }`}
             >
               {sp.label}
@@ -125,19 +128,23 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
       </div>
 
       {/* Scrubber Progress Slider */}
-      <div className="flex items-center space-x-3 pt-1">
+      <div className="flex items-center space-x-3 pt-1 border-t border-border-light">
+        <span className="text-[10px] font-mono text-content-muted shrink-0 uppercase">
+          TICK 00
+        </span>
         <input
           type="range"
           min="0"
           max={totalEvents}
           value={currentSeq}
           onChange={(e) => onJumpTo(Number(e.target.value))}
-          className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400 hover:accent-cyan-300 transition-all"
+          className="w-full h-1.5 bg-border rounded-none appearance-none cursor-pointer"
         />
-        <span className="text-[10px] font-mono text-slate-400 shrink-0">
+        <span className="text-[10px] font-mono text-content-secondary font-semibold shrink-0">
           {totalEvents > 0 ? `${Math.round((currentSeq / totalEvents) * 100)}%` : '0%'}
         </span>
       </div>
     </div>
   );
 };
+

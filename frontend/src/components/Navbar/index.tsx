@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, ShieldCheck, Terminal, Cpu } from 'lucide-react';
+import { Terminal, Activity, Cpu, ShieldCheck } from 'lucide-react';
 
 interface NavbarProps {
   connected: boolean;
@@ -9,73 +9,78 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ connected, activeMode, onSelectMode }) => {
   return (
-    <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 px-4 py-2.5">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <header className="border-b border-border bg-canvas-surface sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        {/* Left: Brand & Navigation */}
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-2.5">
-            <div className="h-7 w-7 rounded bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center font-mono font-bold text-white shadow-lg shadow-cyan-500/20 text-xs">
+            <div className="h-7 w-7 bg-accent-primary text-white flex items-center justify-center font-mono font-bold text-xs">
               DW
             </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-bold text-base tracking-tight text-white font-mono">
-                  DEPTHWISE
-                </span>
-                <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-slate-800 text-cyan-400 border border-slate-700 font-semibold">
-                  v0.1
-                </span>
-              </div>
+            <div className="flex items-center space-x-2">
+              <span className="font-mono font-bold text-sm tracking-wider text-content">
+                DEPTHWISE
+              </span>
+              <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 bg-purple-50 text-accent-primary border border-purple-200 font-semibold">
+                v0.1
+              </span>
             </div>
           </div>
 
-          <nav className="flex items-center space-x-1 bg-slate-950/60 p-1 rounded-lg border border-slate-800 text-xs font-medium">
+          <div className="h-4 w-px bg-border hidden sm:block" />
+
+          {/* Mode Selector */}
+          <nav className="flex items-center space-x-1 bg-canvas-subtle p-0.5 border border-border">
             <button
               onClick={() => onSelectMode('lab')}
-              className={`px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition-all ${
+              className={`px-3 py-1 text-xs font-mono transition-colors flex items-center space-x-1.5 ${
                 activeMode === 'lab'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-canvas-surface text-content font-bold border border-border-strong border-l-2 border-l-accent-primary'
+                  : 'text-content-secondary hover:text-content border border-transparent'
               }`}
             >
-              <Terminal className="w-3.5 h-3.5" />
-              <span>Learning Lab</span>
+              <Terminal className="w-3.5 h-3.5 text-accent-primary" />
+              <span>01 / LEARNING LAB</span>
             </button>
             <button
               onClick={() => onSelectMode('live')}
-              className={`px-3 py-1.5 rounded-md flex items-center space-x-1.5 transition-all ${
+              className={`px-3 py-1 text-xs font-mono transition-colors flex items-center space-x-1.5 ${
                 activeMode === 'live'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-400 cursor-not-allowed opacity-60'
+                  ? 'bg-canvas-surface text-content font-bold border border-border-strong border-l-2 border-l-accent-primary'
+                  : 'text-content-disabled border border-transparent cursor-not-allowed opacity-60'
               }`}
               title="Live Pulse mode coming in next milestone"
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>Live Pulse</span>
-              <span className="text-[9px] bg-slate-800 text-slate-400 px-1 py-0.2 rounded uppercase">Soon</span>
+              <span>02 / LIVE PULSE</span>
+              <span className="text-[9px] bg-canvas-dark text-content-muted px-1 py-0.2 border border-border">SOON</span>
             </button>
           </nav>
         </div>
 
-        <div className="flex items-center space-x-4 text-xs font-mono">
-          <div className="flex items-center space-x-2 px-2.5 py-1 rounded bg-slate-950 border border-slate-800">
-            <Cpu className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="text-slate-400">Go Engine:</span>
-            <span className="text-slate-200 font-semibold">~330k ops/sec</span>
+        {/* Right: Telemetry & State */}
+        <div className="flex items-center space-x-3 text-xs font-mono">
+          <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 bg-canvas-subtle border border-border text-content-secondary">
+            <Cpu className="w-3.5 h-3.5 text-accent-secondary" />
+            <span>ENGINE:</span>
+            <span className="text-content font-semibold">~330k ops/sec</span>
           </div>
 
-          <div className="flex items-center space-x-2 px-2.5 py-1 rounded bg-slate-950 border border-slate-800">
-            <span className={`h-2 w-2 rounded-full ${connected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-            <span className={connected ? 'text-emerald-400 font-medium' : 'text-rose-400 font-medium'}>
-              {connected ? 'WS Engine Connected' : 'Disconnected'}
+          <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 bg-canvas-subtle border border-border text-content-secondary">
+            <ShieldCheck className="w-3.5 h-3.5 text-bid" />
+            <span>FIFO CORE</span>
+          </div>
+
+          <div className="flex items-center space-x-2 px-2.5 py-1 bg-canvas-surface border border-border">
+            <span className={`h-2 w-2 ${connected ? 'bg-bid animate-pulse' : 'bg-ask'}`} />
+            <span className={connected ? 'text-bid font-bold' : 'text-ask font-bold'}>
+              {connected ? 'CORE CONNECTED' : 'DISCONNECTED'}
             </span>
-          </div>
-
-          <div className="hidden sm:flex items-center space-x-1.5 text-slate-400 hover:text-slate-200 transition-colors">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            <span className="text-[11px] font-sans">Deterministic Core</span>
           </div>
         </div>
       </div>
     </header>
   );
 };
+
+

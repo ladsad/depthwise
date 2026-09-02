@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { BookSnapshot } from '../../lib/types';
-import { Layers } from 'lucide-react';
+import { Layers, CornerDownRight } from 'lucide-react';
 
 interface OrderBookProps {
   book: BookSnapshot;
@@ -55,28 +55,29 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
         <div className="flex items-center space-x-2">
           <Layers className="w-4 h-4 text-cyan-400" />
           <h2 className="text-sm font-semibold text-slate-100 uppercase tracking-wider font-mono">
-            Level-2 Order Book
+            Level-2 Order Book Ladder
           </h2>
         </div>
-        <span className="text-[11px] text-slate-400 font-mono bg-slate-800/60 px-2 py-0.5 rounded border border-slate-700/50">
-          Price-Time Priority (FIFO)
-        </span>
+        <div className="flex items-center space-x-2 text-[11px] text-slate-400 font-mono bg-slate-800/60 px-2.5 py-1 rounded border border-slate-700/50">
+          <CornerDownRight className="w-3.5 h-3.5 text-cyan-400" />
+          <span>FIFO Queue Priority</span>
+        </div>
       </div>
 
       {/* Column Headers */}
-      <div className="grid grid-cols-12 px-4 py-1.5 text-[11px] font-mono text-slate-400 border-b border-slate-800/50 bg-slate-950/20">
-        <div className="col-span-3">Price ($)</div>
-        <div className="col-span-3 text-right">Size</div>
-        <div className="col-span-6 pl-4">Resting Queue (FIFO)</div>
+      <div className="grid grid-cols-12 px-4 py-2 text-[11px] font-mono text-slate-400 border-b border-slate-800/50 bg-slate-950/20">
+        <div className="col-span-3">Price Level ($)</div>
+        <div className="col-span-2 text-right">Agg. Vol</div>
+        <div className="col-span-7 pl-4">FIFO Queue Slots (1st ➔ 2nd ➔ ...)</div>
       </div>
 
       {/* Ladder Body */}
-      <div className="flex-1 overflow-y-auto divide-y divide-slate-800/30 flex flex-col justify-between p-2 min-h-[300px]">
+      <div className="flex-1 overflow-y-auto divide-y divide-slate-800/30 flex flex-col justify-between p-2 min-h-[320px]">
         {/* Asks Section */}
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           {sortedAsks.length === 0 ? (
-            <div className="text-center py-6 text-xs font-mono text-slate-600 italic">
-              No resting asks in book
+            <div className="text-center py-6 text-xs font-mono text-slate-600 italic bg-slate-950/20 rounded-lg border border-slate-800/30">
+              No resting asks in book (Ask liquidity empty)
             </div>
           ) : (
             sortedAsks.map(({ price, totalQty, orders }) => {
@@ -86,8 +87,8 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
               return (
                 <div
                   key={`ask-${price}`}
-                  className={`relative grid grid-cols-12 px-2 py-1.5 rounded text-xs font-mono items-center transition-all ${
-                    hasActiveOrder ? 'bg-rose-500/20 ring-1 ring-rose-500/40' : 'hover:bg-slate-800/40'
+                  className={`relative grid grid-cols-12 px-2.5 py-2 rounded-lg text-xs font-mono items-center transition-all ${
+                    hasActiveOrder ? 'bg-rose-950/40 ring-1 ring-rose-400/80 shadow-md shadow-rose-950/50' : 'hover:bg-slate-800/40'
                   }`}
                 >
                   {/* Depth Bar Background */}
@@ -97,31 +98,36 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
                   />
 
                   {/* Price */}
-                  <div className="col-span-3 font-semibold text-rose-400 z-10">
-                    ${price.toFixed(2)}
+                  <div className="col-span-3 font-bold text-rose-400 z-10 flex items-center space-x-1.5">
+                    <span>${price.toFixed(2)}</span>
+                    <span className="text-[10px] text-rose-500/70 font-normal uppercase">Ask</span>
                   </div>
 
                   {/* Size */}
-                  <div className="col-span-3 text-right font-medium text-slate-200 z-10">
+                  <div className="col-span-2 text-right font-bold text-slate-100 z-10">
                     {totalQty}
                   </div>
 
-                  {/* FIFO Resting Queue Breakdown */}
-                  <div className="col-span-6 pl-4 flex flex-wrap gap-1 z-10">
-                    {orders.map((o, idx) => (
-                      <span
-                        key={o.id}
-                        className={`text-[10px] px-1.5 py-0.5 rounded border transition-all ${
-                          o.id === latestEventID
-                            ? 'bg-rose-500/30 text-rose-200 border-rose-400 font-bold'
-                            : 'bg-slate-800/80 text-slate-300 border-slate-700/60'
-                        }`}
-                        title={`Queue position #${idx + 1} at price $${price} (Remaining: ${o.qty})`}
-                      >
-                        <span className="text-rose-400 font-semibold">{o.id}</span>
-                        <span className="text-slate-400 ml-1">({o.qty})</span>
-                      </span>
-                    ))}
+                  {/* FIFO Resting Queue Lane */}
+                  <div className="col-span-7 pl-4 flex items-center space-x-1.5 overflow-x-auto z-10 py-0.5">
+                    {orders.map((o, idx) => {
+                      const isTarget = o.id === latestEventID;
+                      return (
+                        <div
+                          key={o.id}
+                          className={`flex items-center space-x-1 text-[11px] px-2 py-0.5 rounded-md border transition-all ${
+                            isTarget
+                              ? 'bg-rose-500/30 text-rose-100 border-rose-400 font-bold ring-2 ring-rose-500/40 scale-105'
+                              : 'bg-slate-800/90 text-slate-200 border-slate-700/80'
+                          }`}
+                          title={`Queue Slot #${idx + 1} at price $${price} (Remaining: ${o.qty})`}
+                        >
+                          <span className="text-[9px] font-mono text-slate-400">#{idx + 1}</span>
+                          <span className="font-bold text-rose-300">{o.id}</span>
+                          <span className="text-slate-300 font-mono bg-slate-900/60 px-1 rounded">{o.qty}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               );
@@ -129,39 +135,41 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
           )}
         </div>
 
-        {/* Spread Divider */}
-        <div className="py-2.5 px-3 my-1.5 bg-slate-950/80 border border-slate-800 rounded-lg flex items-center justify-between text-xs font-mono">
+        {/* Spread Divider / Collision Zone */}
+        <div className="py-2.5 px-3.5 my-2 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800 rounded-lg flex items-center justify-between text-xs font-mono shadow-inner">
           <div className="flex items-center space-x-2">
-            <span className="text-slate-500 uppercase text-[10px] tracking-wider font-semibold">Spread:</span>
+            <span className="text-slate-400 uppercase text-[10px] tracking-wider font-bold">Inside Spread:</span>
             {spread !== null ? (
-              <span className="text-cyan-400 font-bold">
+              <span className="text-cyan-400 font-bold bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/40">
                 ${spread.toFixed(2)}{' '}
                 {bestBid && (
-                  <span className="text-slate-500 font-normal">
+                  <span className="text-cyan-300/70 font-normal text-[11px]">
                     ({((spread / bestBid) * 10000).toFixed(0)} bps)
                   </span>
                 )}
               </span>
             ) : (
-              <span className="text-slate-600 italic">Spread undefined (1-sided)</span>
+              <span className="text-amber-400 font-medium bg-amber-950/40 px-2 py-0.5 rounded border border-amber-500/30">
+                1-Sided Market (Spread undefined)
+              </span>
             )}
           </div>
           <div className="flex items-center space-x-3 text-[11px]">
-            <span className="text-emerald-400">
-              Best Bid: {bestBid !== null ? `$${bestBid.toFixed(2)}` : '—'}
+            <span className="text-emerald-400 font-semibold">
+              Bid: {bestBid !== null ? `$${bestBid.toFixed(2)}` : '—'}
             </span>
-            <span className="text-slate-600">|</span>
-            <span className="text-rose-400">
-              Best Ask: {bestAsk !== null ? `$${bestAsk.toFixed(2)}` : '—'}
+            <span className="text-slate-600">⟷</span>
+            <span className="text-rose-400 font-semibold">
+              Ask: {bestAsk !== null ? `$${bestAsk.toFixed(2)}` : '—'}
             </span>
           </div>
         </div>
 
         {/* Bids Section */}
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           {sortedBids.length === 0 ? (
-            <div className="text-center py-6 text-xs font-mono text-slate-600 italic">
-              No resting bids in book
+            <div className="text-center py-6 text-xs font-mono text-slate-600 italic bg-slate-950/20 rounded-lg border border-slate-800/30">
+              No resting bids in book (Bid liquidity empty)
             </div>
           ) : (
             sortedBids.map(({ price, totalQty, orders }) => {
@@ -171,8 +179,8 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
               return (
                 <div
                   key={`bid-${price}`}
-                  className={`relative grid grid-cols-12 px-2 py-1.5 rounded text-xs font-mono items-center transition-all ${
-                    hasActiveOrder ? 'bg-emerald-500/20 ring-1 ring-emerald-500/40' : 'hover:bg-slate-800/40'
+                  className={`relative grid grid-cols-12 px-2.5 py-2 rounded-lg text-xs font-mono items-center transition-all ${
+                    hasActiveOrder ? 'bg-emerald-950/40 ring-1 ring-emerald-400/80 shadow-md shadow-emerald-950/50' : 'hover:bg-slate-800/40'
                   }`}
                 >
                   {/* Depth Bar Background */}
@@ -182,31 +190,36 @@ export const OrderBook: React.FC<OrderBookProps> = ({ book, latestEventID }) => 
                   />
 
                   {/* Price */}
-                  <div className="col-span-3 font-semibold text-emerald-400 z-10">
-                    ${price.toFixed(2)}
+                  <div className="col-span-3 font-bold text-emerald-400 z-10 flex items-center space-x-1.5">
+                    <span>${price.toFixed(2)}</span>
+                    <span className="text-[10px] text-emerald-500/70 font-normal uppercase">Bid</span>
                   </div>
 
                   {/* Size */}
-                  <div className="col-span-3 text-right font-medium text-slate-200 z-10">
+                  <div className="col-span-2 text-right font-bold text-slate-100 z-10">
                     {totalQty}
                   </div>
 
-                  {/* FIFO Resting Queue Breakdown */}
-                  <div className="col-span-6 pl-4 flex flex-wrap gap-1 z-10">
-                    {orders.map((o, idx) => (
-                      <span
-                        key={o.id}
-                        className={`text-[10px] px-1.5 py-0.5 rounded border transition-all ${
-                          o.id === latestEventID
-                            ? 'bg-emerald-500/30 text-emerald-200 border-emerald-400 font-bold'
-                            : 'bg-slate-800/80 text-slate-300 border-slate-700/60'
-                        }`}
-                        title={`Queue position #${idx + 1} at price $${price} (Remaining: ${o.qty})`}
-                      >
-                        <span className="text-emerald-400 font-semibold">{o.id}</span>
-                        <span className="text-slate-400 ml-1">({o.qty})</span>
-                      </span>
-                    ))}
+                  {/* FIFO Resting Queue Lane */}
+                  <div className="col-span-7 pl-4 flex items-center space-x-1.5 overflow-x-auto z-10 py-0.5">
+                    {orders.map((o, idx) => {
+                      const isTarget = o.id === latestEventID;
+                      return (
+                        <div
+                          key={o.id}
+                          className={`flex items-center space-x-1 text-[11px] px-2 py-0.5 rounded-md border transition-all ${
+                            isTarget
+                              ? 'bg-emerald-500/30 text-emerald-100 border-emerald-400 font-bold ring-2 ring-emerald-500/40 scale-105'
+                              : 'bg-slate-800/90 text-slate-200 border-slate-700/80'
+                          }`}
+                          title={`Queue Slot #${idx + 1} at price $${price} (Remaining: ${o.qty})`}
+                        >
+                          <span className="text-[9px] font-mono text-slate-400">#{idx + 1}</span>
+                          <span className="font-bold text-emerald-300">{o.id}</span>
+                          <span className="text-slate-300 font-mono bg-slate-900/60 px-1 rounded">{o.qty}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               );

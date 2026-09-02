@@ -4,25 +4,79 @@
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100 font-sans antialiased;
+    @apply bg-canvas text-content font-sans antialiased;
+    background-color: #F7F8FA;
+    color: #171A1F;
   }
 }
 
-/* Custom scrollbars */
+/* Subtle Technical Blueprint Grid (32px x 32px) */
+.bg-tech-grid {
+  background-image:
+    linear-gradient(#E7E9ED 1px, transparent 1px),
+    linear-gradient(90deg, #E7E9ED 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Technical Blueprint Grid (Large 40px x 40px) */
+.bg-tech-grid-lg {
+  background-image:
+    linear-gradient(#E7E9ED 1px, transparent 1px),
+    linear-gradient(90deg, #E7E9ED 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Flat 2D Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: #F1F3F5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(51, 65, 85, 0.8);
-  border-radius: 3px;
+  background: #D9DDE3;
+  border-radius: 0px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(71, 85, 105, 1);
+  background: #AEB5BF;
+}
+
+/* Custom Flat Range Input */
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: #D9DDE3;
+  border-radius: 0px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 2px;
+  background: #171A1F;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -5px;
+  border: 1px solid #171A1F;
+  transition: background 0.15s ease;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+  background: #6D28D9;
+  border-color: #6D28D9;
 }
