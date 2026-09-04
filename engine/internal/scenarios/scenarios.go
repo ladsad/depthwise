@@ -30,6 +30,20 @@ func GetScenarios() []ScenarioMeta {
 			TotalEvents: len(Scenario1Events),
 			Events:      Scenario1Events,
 		},
+		{
+			ID:          "scenario_2",
+			Title:       "2. Order-Flow Imbalance (OFI)",
+			Description: "Demonstrates how sustained aggregate buying pressure (4-5x buy vs sell volume) drives upward price drift by exhausting resting asks and stepping bids higher without large individual block trades.",
+			Concepts: []string{
+				"Order Flow Imbalance (OFI)",
+				"Upward Price Drift",
+				"Ask Liquidity Exhaustion",
+				"Bid Level Stepping",
+				"Kyle's Lambda Price Impact",
+			},
+			TotalEvents: len(Scenario2Events),
+			Events:      Scenario2Events,
+		},
 	}
 }
 

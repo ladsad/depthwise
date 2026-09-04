@@ -11,6 +11,7 @@ import (
 	"depthwise/engine/internal/matching"
 	"depthwise/engine/internal/orderbook"
 	"depthwise/engine/internal/scenarios"
+	"depthwise/engine/internal/signal"
 
 	"github.com/gorilla/websocket"
 )
@@ -31,17 +32,19 @@ type WSClientMessage struct {
 
 // WSServerMessage represents outgoing message to the frontend.
 type WSServerMessage struct {
-	Type         string                  `json:"type"` // "scenario_loaded" | "step_result" | "playback_state" | "error"
-	Scenario     *scenarios.ScenarioMeta `json:"scenario,omitempty"`
-	CurrentSeq   int                     `json:"current_seq"`
-	TotalEvents  int                     `json:"total_events"`
-	IsPlaying    bool                    `json:"is_playing"`
-	Book         orderbook.BookSnapshot  `json:"book"`
-	Trades       []orderbook.Trade       `json:"trades,omitempty"`
-	AllTrades    []orderbook.Trade       `json:"all_trades,omitempty"`
-	Explanation  *matching.StepExplanation `json:"explanation,omitempty"`
+	Type            string                     `json:"type"` // "scenario_loaded" | "step_result" | "playback_state" | "error"
+	Scenario        *scenarios.ScenarioMeta    `json:"scenario,omitempty"`
+	CurrentSeq      int                        `json:"current_seq"`
+	TotalEvents     int                        `json:"total_events"`
+	IsPlaying       bool                       `json:"is_playing"`
+	Book            orderbook.BookSnapshot     `json:"book"`
+	Trades          []orderbook.Trade          `json:"trades,omitempty"`
+	AllTrades       []orderbook.Trade          `json:"all_trades,omitempty"`
+	Explanation     *matching.StepExplanation  `json:"explanation,omitempty"`
 	AllExplanations []matching.StepExplanation `json:"all_explanations,omitempty"`
-	ErrorMessage string                  `json:"error_message,omitempty"`
+	OFI             *signal.OFIMetric          `json:"ofi,omitempty"`
+	OFIHistory      []signal.OFIMetric         `json:"ofi_history,omitempty"`
+	ErrorMessage    string                     `json:"error_message,omitempty"`
 }
 
 // Session represents a single user's interactive simulation session.
@@ -49,10 +52,12 @@ type Session struct {
 	mu           sync.Mutex
 	conn         *websocket.Conn
 	engine       *matching.Engine
+	ofiCalc      *signal.OFICalculator
 	scenario     *scenarios.ScenarioMeta
 	currentIdx   int // index in scenario.Events (0 to len-1)
 	allTrades    []orderbook.Trade
 	explanations []matching.StepExplanation
+	ofiHistory   []signal.OFIMetric
 	isPlaying    bool
 	stopPlayChan chan struct{}
 }
@@ -61,8 +66,10 @@ func newSession(conn *websocket.Conn) *Session {
 	s := &Session{
 		conn:         conn,
 		engine:       matching.NewEngine(),
+		ofiCalc:      signal.NewOFICalculator(20, 3.0, 10),
 		allTrades:    make([]orderbook.Trade, 0),
 		explanations: make([]matching.StepExplanation, 0),
+		ofiHistory:   make([]signal.OFIMetric, 0),
 		stopPlayChan: make(chan struct{}),
 	}
 	return s
@@ -85,11 +92,16 @@ func (s *Session) loadScenario(id string) error {
 
 	s.scenario = sc
 	s.engine = matching.NewEngine()
+	s.ofiCalc.Reset()
 	s.currentIdx = 0
 	s.allTrades = make([]orderbook.Trade, 0)
 	s.explanations = make([]matching.StepExplanation, 0)
+	s.ofiHistory = make([]signal.OFIMetric, 0)
 
-	return s.sendState("scenario_loaded", nil, nil)
+	initOFI := s.ofiCalc.Update(s.engine.Snapshot())
+	s.ofiHistory = append(s.ofiHistory, initOFI)
+
+	return s.sendState("scenario_loaded", nil, nil, &initOFI)
 }
 
 func (s *Session) reset() {
@@ -98,10 +110,16 @@ func (s *Session) reset() {
 		return
 	}
 	s.engine = matching.NewEngine()
+	s.ofiCalc.Reset()
 	s.currentIdx = 0
 	s.allTrades = make([]orderbook.Trade, 0)
 	s.explanations = make([]matching.StepExplanation, 0)
-	_ = s.sendState("scenario_loaded", nil, nil)
+	s.ofiHistory = make([]signal.OFIMetric, 0)
+
+	initOFI := s.ofiCalc.Update(s.engine.Snapshot())
+	s.ofiHistory = append(s.ofiHistory, initOFI)
+
+	_ = s.sendState("scenario_loaded", nil, nil, &initOFI)
 }
 
 func (s *Session) step() error {
@@ -120,7 +138,10 @@ func (s *Session) step() error {
 	s.allTrades = append(s.allTrades, trades...)
 	s.explanations = append(s.explanations, exp)
 
-	return s.sendState("step_result", trades, &exp)
+	ofi := s.ofiCalc.Update(s.engine.Snapshot())
+	s.ofiHistory = append(s.ofiHistory, ofi)
+
+	return s.sendState("step_result", trades, &exp, &ofi)
 }
 
 func (s *Session) jumpTo(targetSeq int) error {
@@ -129,14 +150,20 @@ func (s *Session) jumpTo(targetSeq int) error {
 		return fmt.Errorf("no scenario loaded")
 	}
 
-	// Reset engine
+	// Reset engine and OFI calculator
 	s.engine = matching.NewEngine()
+	s.ofiCalc.Reset()
 	s.currentIdx = 0
 	s.allTrades = make([]orderbook.Trade, 0)
 	s.explanations = make([]matching.StepExplanation, 0)
+	s.ofiHistory = make([]signal.OFIMetric, 0)
+
+	initOFI := s.ofiCalc.Update(s.engine.Snapshot())
+	s.ofiHistory = append(s.ofiHistory, initOFI)
 
 	var lastExp *matching.StepExplanation
 	var lastTrades []orderbook.Trade
+	var lastOFI signal.OFIMetric = initOFI
 
 	for s.currentIdx < len(s.scenario.Events) && s.currentIdx < targetSeq {
 		ev := s.scenario.Events[s.currentIdx]
@@ -146,9 +173,12 @@ func (s *Session) jumpTo(targetSeq int) error {
 		s.explanations = append(s.explanations, exp)
 		lastExp = &exp
 		lastTrades = trades
+
+		lastOFI = s.ofiCalc.Update(s.engine.Snapshot())
+		s.ofiHistory = append(s.ofiHistory, lastOFI)
 	}
 
-	return s.sendState("step_result", lastTrades, lastExp)
+	return s.sendState("step_result", lastTrades, lastExp, &lastOFI)
 }
 
 func (s *Session) startPlay(intervalMs int) {
@@ -190,6 +220,11 @@ func (s *Session) startPlay(intervalMs int) {
 }
 
 func (s *Session) sendPlaybackState() error {
+	var latestOFI *signal.OFIMetric
+	if len(s.ofiHistory) > 0 {
+		latestOFI = &s.ofiHistory[len(s.ofiHistory)-1]
+	}
+
 	msg := WSServerMessage{
 		Type:        "playback_state",
 		Scenario:    s.scenario,
@@ -198,11 +233,13 @@ func (s *Session) sendPlaybackState() error {
 		IsPlaying:   s.isPlaying,
 		Book:        s.engine.Snapshot(),
 		AllTrades:   s.allTrades,
+		OFI:         latestOFI,
+		OFIHistory:  s.ofiHistory,
 	}
 	return s.conn.WriteJSON(msg)
 }
 
-func (s *Session) sendState(msgType string, stepTrades []orderbook.Trade, stepExp *matching.StepExplanation) error {
+func (s *Session) sendState(msgType string, stepTrades []orderbook.Trade, stepExp *matching.StepExplanation, ofi *signal.OFIMetric) error {
 	total := 0
 	if s.scenario != nil {
 		total = len(s.scenario.Events)
@@ -219,6 +256,8 @@ func (s *Session) sendState(msgType string, stepTrades []orderbook.Trade, stepEx
 		AllTrades:       s.allTrades,
 		Explanation:     stepExp,
 		AllExplanations: s.explanations,
+		OFI:             ofi,
+		OFIHistory:      s.ofiHistory,
 	}
 	return s.conn.WriteJSON(msg)
 }
