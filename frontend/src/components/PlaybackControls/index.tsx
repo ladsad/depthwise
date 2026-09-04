@@ -1,9 +1,10 @@
 import React from 'react';
-import { Play, Pause, RotateCcw, ChevronRight, Gauge } from 'lucide-react';
+import { Play, Pause, RotateCcw, ChevronRight, Gauge, ChevronDown } from 'lucide-react';
 import { ScenarioMeta } from '../../lib/types';
 
 interface PlaybackControlsProps {
   scenario: ScenarioMeta | null;
+  allScenarios?: ScenarioMeta[];
   currentSeq: number;
   totalEvents: number;
   isPlaying: boolean;
@@ -12,10 +13,12 @@ interface PlaybackControlsProps {
   onPlay: (intervalMs?: number) => void;
   onPause: () => void;
   onJumpTo: (seq: number) => void;
+  onSelectScenario?: (id: string) => void;
 }
 
 export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   scenario,
+  allScenarios = [],
   currentSeq,
   totalEvents,
   isPlaying,
@@ -24,6 +27,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   onPlay,
   onPause,
   onJumpTo,
+  onSelectScenario,
 }) => {
   const [speedMs, setSpeedMs] = React.useState<number>(700);
 
@@ -39,11 +43,29 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
   return (
     <div className="bg-canvas-surface border border-border p-4 flex flex-col space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Scenario Metadata */}
+        {/* Scenario Metadata & Switcher */}
         <div className="flex items-center space-x-3">
-          <div className="px-2.5 py-1 bg-terracotta-subtle border border-terracotta-border text-terracotta-dark font-mono text-xs font-bold uppercase tracking-wider">
-            {scenario?.title ? `SCENARIO / ${scenario.title}` : 'SCENARIO / 01'}
-          </div>
+          {allScenarios.length > 0 && onSelectScenario ? (
+            <div className="relative">
+              <select
+                value={scenario?.id || 'scenario_1'}
+                onChange={(e) => onSelectScenario(e.target.value)}
+                className="appearance-none bg-terracotta-subtle border border-terracotta-border text-terracotta-dark font-mono text-xs font-bold uppercase tracking-wider px-3 py-1.5 pr-8 cursor-pointer hover:bg-terracotta-light transition-colors focus:outline-none focus:ring-1 focus:ring-terracotta"
+              >
+                {allScenarios.map((sc) => (
+                  <option key={sc.id} value={sc.id} className="bg-canvas-surface text-content font-mono text-xs">
+                    {sc.title}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-terracotta-dark absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          ) : (
+            <div className="px-2.5 py-1 bg-terracotta-subtle border border-terracotta-border text-terracotta-dark font-mono text-xs font-bold uppercase tracking-wider">
+              {scenario?.title ? `SCENARIO / ${scenario.title}` : 'SCENARIO / 01'}
+            </div>
+          )}
+
           <div className="text-xs text-content-secondary font-mono">
             SEQUENCE: <span className="text-content font-bold">{String(currentSeq).padStart(2, '0')}</span> / {String(totalEvents).padStart(2, '0')}
           </div>
@@ -64,12 +86,12 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
           <button
             onClick={() => (isPlaying ? onPause() : onPlay(speedMs))}
             disabled={isAtEnd && !isPlaying}
-            className={`px-3 py-1.5 flex items-center space-x-1.5 text-xs font-mono font-bold transition-colors border ${
+            className={`px-3 py-1.5 flex items-center space-x-1.5 text-xs font-mono font-bold uppercase tracking-wider transition-colors ${
               isPlaying
-                ? 'bg-navy-light text-navy-dark border-navy-border hover:bg-navy-subtle'
+                ? 'bg-burgundy text-white hover:bg-burgundy-dark'
                 : isAtEnd
-                ? 'bg-canvas-subtle text-content-disabled border-border cursor-not-allowed'
-                : 'bg-terracotta text-white border-terracotta-dark hover:bg-terracotta-dark'
+                ? 'bg-canvas-dark text-content-disabled border border-border cursor-not-allowed'
+                : 'bg-content text-canvas-surface hover:bg-black'
             }`}
           >
             {isPlaying ? (
@@ -80,19 +102,19 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
             ) : (
               <>
                 <Play className="w-3.5 h-3.5 fill-current" />
-                <span>PLAY AUTO</span>
+                <span>PLAY</span>
               </>
             )}
           </button>
 
-          {/* Step Tick Button */}
+          {/* Step Button */}
           <button
             onClick={onStep}
             disabled={isAtEnd || isPlaying}
-            className={`px-3.5 py-1.5 flex items-center space-x-1 text-xs font-mono font-bold transition-colors border ${
+            className={`px-3.5 py-1.5 flex items-center space-x-1 text-xs font-mono font-bold uppercase tracking-wider transition-colors ${
               isAtEnd || isPlaying
-                ? 'bg-canvas-subtle text-content-disabled border-border cursor-not-allowed'
-                : 'bg-burgundy text-white border-burgundy hover:bg-burgundy-dark'
+                ? 'bg-canvas-dark text-content-disabled border border-border cursor-not-allowed'
+                : 'bg-burgundy text-white hover:bg-burgundy-dark active:bg-black'
             }`}
           >
             <span>STEP TICK</span>
@@ -102,10 +124,7 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
 
         {/* Speed Controls */}
         <div className="flex items-center space-x-1 bg-canvas-subtle p-0.5 border border-border text-[11px] font-mono">
-          <div className="flex items-center text-content-secondary px-1.5">
-            <Gauge className="w-3.5 h-3.5 mr-1 text-terracotta" />
-            <span className="text-[10px] uppercase font-bold">SPEED</span>
-          </div>
+          <Gauge className="w-3 h-3 text-content-muted ml-1.5 mr-0.5" />
           {[
             { label: '0.5x', ms: 1200 },
             { label: '1x', ms: 700 },
@@ -117,8 +136,8 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
               onClick={() => handleSpeedChange(sp.ms)}
               className={`px-2 py-0.5 transition-colors ${
                 speedMs === sp.ms
-                  ? 'bg-content text-canvas-surface font-bold border border-content'
-                  : 'text-content-secondary hover:text-content border border-transparent'
+                  ? 'bg-canvas-surface text-content font-bold border border-border-strong border-l-2 border-l-terracotta'
+                  : 'text-content-secondary hover:text-content'
               }`}
             >
               {sp.label}
@@ -128,23 +147,20 @@ export const PlaybackControls: React.FC<PlaybackControlsProps> = ({
       </div>
 
       {/* Scrubber Progress Slider */}
-      <div className="flex items-center space-x-3 pt-1 border-t border-border-light">
-        <span className="text-[10px] font-mono text-content-muted shrink-0 uppercase">
-          TICK 00
-        </span>
+      <div className="flex items-center space-x-3 pt-1">
         <input
           type="range"
           min="0"
           max={totalEvents}
           value={currentSeq}
           onChange={(e) => onJumpTo(Number(e.target.value))}
-          className="w-full h-1.5 bg-border rounded-none appearance-none cursor-pointer"
+          className="w-full h-1 bg-border rounded-none appearance-none cursor-pointer"
         />
-        <span className="text-[10px] font-mono text-content-secondary font-semibold shrink-0">
+        <span className="text-[10px] font-mono text-content-secondary shrink-0 font-bold">
           {totalEvents > 0 ? `${Math.round((currentSeq / totalEvents) * 100)}%` : '0%'}
         </span>
       </div>
     </div>
   );
 };
-
+export default PlaybackControls;

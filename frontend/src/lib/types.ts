@@ -44,6 +44,15 @@ export interface ScenarioMeta {
   events: OrderEvent[];
 }
 
+export interface OFIMetric {
+  delta_ofi: number;
+  cumulative_ofi: number;
+  buy_flow_window: number;
+  sell_flow_window: number;
+  ratio: number;
+  flagged: boolean;
+}
+
 export interface WSServerMessage {
   type: 'scenario_loaded' | 'step_result' | 'playback_state' | 'error';
   scenario?: ScenarioMeta;
@@ -55,6 +64,8 @@ export interface WSServerMessage {
   all_trades?: Trade[];
   explanation?: StepExplanation;
   all_explanations?: StepExplanation[];
+  ofi?: OFIMetric;
+  ofi_history?: OFIMetric[];
   error_message?: string;
 }
 

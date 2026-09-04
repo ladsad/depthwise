@@ -4,6 +4,8 @@ import { Navbar } from '../components/Navbar';
 import { OrderBook } from '../components/OrderBook';
 import { PlaybackControls } from '../components/PlaybackControls';
 import { Timeline } from '../components/Timeline';
+import { SignalHUD } from '../components/SignalHUD';
+import { Heatmap } from '../components/Heatmap';
 import { DepthChart } from '../components/DepthChart';
 import { EventInspector } from '../components/EventInspector';
 import { TradeTape } from '../components/TradeTape';
@@ -18,7 +20,7 @@ export default function Lab() {
     : undefined;
 
   return (
-    <div className="min-h-screen bg-canvas text-content flex flex-col font-sans bg-tech-grid">
+    <div className="min-h-screen bg-canvas text-content flex flex-col font-sans bg-tech-grid pb-12">
       {/* Top Navbar */}
       <Navbar
         connected={engine.connected}
@@ -31,6 +33,7 @@ export default function Lab() {
         {/* Playback Controls & Sequence Scrubber */}
         <PlaybackControls
           scenario={engine.scenario}
+          allScenarios={engine.allScenarios}
           currentSeq={engine.currentSeq}
           totalEvents={engine.totalEvents}
           isPlaying={engine.isPlaying}
@@ -39,6 +42,7 @@ export default function Lab() {
           onPlay={engine.play}
           onPause={engine.pause}
           onJumpTo={engine.jumpTo}
+          onSelectScenario={engine.loadScenario}
         />
 
         {/* Interactive Sequence Timeline */}
@@ -48,9 +52,21 @@ export default function Lab() {
           onJumpTo={engine.jumpTo}
         />
 
-        {/* Dashboard Grid */}
+        {/* Real-Time Quantitative Signal HUD (OFI) */}
+        <SignalHUD
+          ofi={engine.ofi}
+          scenarioId={engine.scenario?.id}
+        />
+
+        {/* Depth-over-Time Waterfall Heatmap (Bookmap Surface) */}
+        <Heatmap
+          bookHistory={engine.bookHistory}
+          currentSeq={engine.currentSeq}
+        />
+
+        {/* Dashboard 2D Structural Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Left Column: Order Book & Execution Tape */}
+          {/* Left Column: Level-2 Order Book & Depth Chart & Execution Tape */}
           <div className="lg:col-span-7 space-y-4 flex flex-col">
             <OrderBook book={engine.book} latestEventID={currentEventID} />
             <DepthChart book={engine.book} />
